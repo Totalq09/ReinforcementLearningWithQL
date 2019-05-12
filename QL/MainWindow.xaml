@@ -5,8 +5,69 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:QL"
         mc:Ignorable="d"
-        Title="MainWindow" Height="800" Width="800">
-    <Grid>
-        
+        Title="MainWindow" Height="1055" Width="1450" ResizeMode="NoResize" Left="0" Top="0">
+    <Grid x:Name="MainGrid">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="1000"></ColumnDefinition>
+            <ColumnDefinition Width="400"></ColumnDefinition>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="1000"></RowDefinition>
+        </Grid.RowDefinitions>
+        <Grid></Grid>
+        <StackPanel Grid.Column="1" 
+                    Orientation="Vertical" 
+                    HorizontalAlignment="Center" 
+                    VerticalAlignment="Top"
+                    Margin="0 20 0 0">
+            
+            <Label HorizontalContentAlignment="Center" FontSize="20" x:Name="WorldSizeLabel">World size</Label>
+            <Slider x:Name="WorldSizeInput" 
+                    Minimum="0" 
+                    Maximum="64"
+                    TickFrequency="1" 
+                    IsSnapToTickEnabled="True" Value="{Binding vm.WorldSize}"></Slider>
+            <TextBlock 
+                Text="{Binding vm.WorldSize}"
+                HorizontalAlignment="Center"
+                FontSize="18" ></TextBlock>
+
+            <Label HorizontalContentAlignment="Center" FontSize="20" x:Name="ExitQuantityLabel" Margin="0 20 0 0">Exit Quantity</Label>
+            <Slider x:Name="ExitQuantityInput" 
+                    Minimum="0" 
+                    Maximum="5"
+                    TickFrequency="1" 
+                    IsSnapToTickEnabled="True" Value="{Binding vm.ExitQuantity}"></Slider>
+            <TextBlock 
+                Text="{Binding vm.ExitQuantity}"
+                HorizontalAlignment="Center"
+                FontSize="18" ></TextBlock>
+
+            <Label HorizontalContentAlignment="Center" FontSize="20" x:Name="IterationQuantityLabel" Margin="0 20 0 0">Learning Iterations</Label>
+            <Slider x:Name="IterationInput" 
+                    Minimum="0" 
+                    Maximum="1000" 
+                    TickFrequency="1" 
+                    IsSnapToTickEnabled="True" Value="{Binding vm.Iterations}"></Slider>
+            <TextBlock 
+                Text="{Binding vm.Iterations}"
+                HorizontalAlignment="Center"
+                FontSize="18" ></TextBlock>
+
+
+            <Label HorizontalContentAlignment="Center" FontSize="20" x:Name="IterationsPerSecondLabel" Margin="0 20 0 0">Iterations Per Second</Label>
+            <Slider x:Name="IterationsPerSecondInput" Minimum="0.00" Maximum="10.00" Value="{Binding vm.IterationsPerSecond}"></Slider>
+            <TextBlock 
+                Text="{Binding vm.IterationsPerSecond}"
+                HorizontalAlignment="Center"
+                FontSize="18" ></TextBlock>
+
+            <StackPanel Margin="0 50 0 0" Orientation="Horizontal">
+                <Button x:Name="Generate" Width="150" Height="50" FontSize="22" Command="{Binding windowVm.GenerateCommand}">Generate area</Button>
+                <Button x:Name="Learn" Width="150" Height="50" FontSize="22" Margin="10 0 0 0">Learn</Button>
+            </StackPanel>
+
+            <Button x:Name="Simulate" Width="250" Height="50" Margin="0 20 0 0" FontSize="22">Show learning result</Button>
+        </StackPanel>
     </Grid>
 </Window>
