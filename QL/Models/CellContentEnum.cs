@@ -10,6 +10,7 @@ namespace QL.Models
     {
         Free = 0,
         Exit = 1,
-        Wall = 2
+        Wall = 2,
+        Agent = 4,
     }
 }

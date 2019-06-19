@@ -10,9 +10,12 @@ namespace QL.Models
     {
         public CellContentEnum CellContent { get; set; }
 
+        public double CurrentReward { get; set; }
+
         public CellModel(CellContentEnum cellContent)
         {
             this.CellContent = cellContent;
+            this.CurrentReward = 0.0;
         }
     }
 }

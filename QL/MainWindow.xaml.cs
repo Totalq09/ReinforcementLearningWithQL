@@ -1,4 +1,5 @@
 ﻿using Prism.Commands;
+using QL.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -36,12 +37,30 @@ namespace QL
                 windowVm = this
             };
             GenerateCommand = new DelegateCommand(ReinitializeArea);
+
+            this.LoaderModal.Background = new SolidColorBrush(Color.FromArgb(220, 60, 60, 60));
         }
 
         public void ReinitializeArea()
         {
-            ViewModel.GenerateNewArea();
+            this.LockButtons();
+            this.LockSliders();
+            this.Loader.Visibility = Visibility.Visible;
 
+            Task.Run(() => 
+            {
+                ViewModel.GenerateNewArea();
+            })
+            .ContinueWith((task) =>
+            {
+                DrawMap();
+                this.UnlockAll();
+                this.Loader.Visibility = Visibility.Hidden;
+            }, TaskScheduler.FromCurrentSynchronizationContext());     
+        }
+
+        private void DrawMap()
+        {
             var grid = new Grid();
             grid.Margin = new Thickness(5, 0, 0, 0);
             grid.MinHeight = 1000;
@@ -64,12 +83,8 @@ namespace QL
 
                     innerGrid.ColumnDefinitions.Add(new ColumnDefinition());
                     innerGrid.RowDefinitions.Add(new RowDefinition());
-                    innerGrid.ColumnDefinitions.Add(new ColumnDefinition());
-                    innerGrid.RowDefinitions.Add(new RowDefinition());
-                    innerGrid.ColumnDefinitions.Add(new ColumnDefinition());
-                    innerGrid.RowDefinitions.Add(new RowDefinition());
 
-                    if(ViewModel.AreaModel.WorldSize < 24)
+                    if (ViewModel.AreaModel.WorldSize < 24)
                     {
                         Viewbox viewBox1 = new Viewbox();
                         viewBox1.Stretch = Stretch.UniformToFill;
@@ -77,59 +92,21 @@ namespace QL
                         t1.Text = "0.5";
                         viewBox1.Child = t1;
 
-                        Viewbox viewBox2 = new Viewbox();
-                        viewBox2.Stretch = Stretch.UniformToFill;
-                        var t2 = new TextBlock();
-                        t2.Text = "0.5";
-                        viewBox2.Child = t2;
-
-                        Viewbox viewBox3 = new Viewbox();
-                        viewBox3.Stretch = Stretch.UniformToFill;
-                        var t3 = new TextBlock();
-                        t3.Text = "0.5";
-                        viewBox3.Child = t3;
-
-                        Viewbox viewBox4 = new Viewbox();
-                        viewBox4.Stretch = Stretch.UniformToFill;
-                        var t4 = new TextBlock();
-                        t4.Text = "0.5";
-                        viewBox4.Child = t4;
-
                         t1.HorizontalAlignment = HorizontalAlignment.Center;
                         t1.VerticalAlignment = VerticalAlignment.Center;
-                        t2.HorizontalAlignment = HorizontalAlignment.Center;
-                        t2.VerticalAlignment = VerticalAlignment.Center;
-                        t3.HorizontalAlignment = HorizontalAlignment.Center;
-                        t3.VerticalAlignment = VerticalAlignment.Center;
-                        t4.HorizontalAlignment = HorizontalAlignment.Center;
-                        t4.VerticalAlignment = VerticalAlignment.Center;
 
                         Grid.SetRow(viewBox1, 0);
-                        Grid.SetColumn(viewBox1, 1);
+                        Grid.SetColumn(viewBox1, 0);
                         innerGrid.Children.Add(viewBox1);
-
-                        Grid.SetRow(viewBox2, 1);
-                        Grid.SetColumn(viewBox2, 0);
-                        innerGrid.Children.Add(viewBox2);
-
-                        Grid.SetRow(viewBox3, 1);
-                        Grid.SetColumn(viewBox3, 2);
-                        innerGrid.Children.Add(viewBox3);
-
-                        Grid.SetRow(viewBox4, 2);
-                        Grid.SetColumn(viewBox4, 1);
-                        innerGrid.Children.Add(viewBox4);
                     }
 
                     Rectangle rect = new Rectangle();
                     rect.Stroke = Brushes.Black;
+                    this.SetBackgroundBasedOnContent(rect, ViewModel.AreaModel.Cells[i, j].CellContent);
                     rect.StrokeThickness = 1;
 
                     Grid.SetRow(rect, 0);
                     Grid.SetColumn(rect, 0);
-
-                    Grid.SetRowSpan(rect, 3);
-                    Grid.SetColumnSpan(rect, 3);
 
                     innerGrid.Children.Add(rect);
 
@@ -143,6 +120,51 @@ namespace QL
             MainGrid.Children.RemoveAt(0);
             MainGrid.Children.Insert(0, grid);
         }
-    
+
+        private void SetBackgroundBasedOnContent(Rectangle rectangle, CellContentEnum cellContentEnum)
+        {
+            switch(cellContentEnum)
+            {
+                case CellContentEnum.Exit:
+                    rectangle.Fill = Brushes.Aqua;
+                    break;
+                case CellContentEnum.Free:
+                    rectangle.Fill = Brushes.White;
+                    break;
+                case CellContentEnum.Wall:
+                    rectangle.Fill = new SolidColorBrush(Color.FromRgb(40, 40, 40));
+                    break;
+                case CellContentEnum.Agent:
+                    rectangle.Fill = Brushes.IndianRed;
+                    break;
+            }
+        }
+
+        public void LockButtons()
+        {
+            this.Simulate.IsEnabled = false;
+            this.Generate.IsEnabled = false;
+            this.Learn.IsEnabled = false;
+        }
+
+        public void LockSliders()
+        {
+            this.IterationsPerSecondInput.IsEnabled = false;
+            this.IterationInput.IsEnabled = false;
+            this.ExitQuantityInput.IsEnabled = false;
+            this.WorldSizeInput.IsEnabled = false;
+        }
+
+        public void UnlockAll()
+        {
+            this.Simulate.IsEnabled = true;
+            this.Generate.IsEnabled = true;
+            this.Learn.IsEnabled = true;
+
+            this.IterationsPerSecondInput.IsEnabled = true;
+            this.IterationInput.IsEnabled = true;
+            this.ExitQuantityInput.IsEnabled = true;
+            this.WorldSizeInput.IsEnabled = true;
+        }
     }
 }

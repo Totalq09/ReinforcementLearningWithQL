@@ -15,6 +15,12 @@
             <RowDefinition Height="1000"></RowDefinition>
         </Grid.RowDefinitions>
         <Grid></Grid>
+        <Grid x:Name="Loader" Visibility="Hidden">
+            <Border Name="LoaderModal"></Border>
+            <Viewbox>
+                <TextBlock Margin="10">Loading...</TextBlock>
+            </Viewbox>
+        </Grid>
         <StackPanel Grid.Column="1" 
                     Orientation="Vertical" 
                     HorizontalAlignment="Center" 
@@ -34,7 +40,7 @@
 
             <Label HorizontalContentAlignment="Center" FontSize="20" x:Name="ExitQuantityLabel" Margin="0 20 0 0">Exit Quantity</Label>
             <Slider x:Name="ExitQuantityInput" 
-                    Minimum="0" 
+                    Minimum="1" 
                     Maximum="5"
                     TickFrequency="1" 
                     IsSnapToTickEnabled="True" Value="{Binding vm.ExitQuantity}"></Slider>
