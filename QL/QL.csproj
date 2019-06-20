@@ -68,10 +68,13 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Helpers\IterationUpdateEventArgs.cs" />
     <Compile Include="Models\AreaModel.cs" />
     <Compile Include="Models\CellContentEnum.cs" />
     <Compile Include="Models\CellModel.cs" />
+    <Compile Include="QLEngine.cs" />
     <Compile Include="QLViewModel.cs" />
+    <Compile Include="Randomizer.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>

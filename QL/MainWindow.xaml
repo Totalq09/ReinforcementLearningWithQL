@@ -6,6 +6,9 @@
         xmlns:local="clr-namespace:QL"
         mc:Ignorable="d"
         Title="MainWindow" Height="1055" Width="1450" ResizeMode="NoResize" Left="0" Top="0">
+    <Window.Resources>
+        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
+    </Window.Resources>
     <Grid x:Name="MainGrid">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="1000"></ColumnDefinition>
@@ -29,7 +32,7 @@
             
             <Label HorizontalContentAlignment="Center" FontSize="20" x:Name="WorldSizeLabel">World size</Label>
             <Slider x:Name="WorldSizeInput" 
-                    Minimum="0" 
+                    Minimum="6" 
                     Maximum="64"
                     TickFrequency="1" 
                     IsSnapToTickEnabled="True" Value="{Binding vm.WorldSize}"></Slider>
@@ -49,31 +52,67 @@
                 HorizontalAlignment="Center"
                 FontSize="18" ></TextBlock>
 
+            <Label HorizontalContentAlignment="Center" FontSize="20" x:Name="IterationLengthLabel" Margin="0 20 0 0">Learning Iteration Length</Label>
+            <Slider x:Name="IterationLengthInput" 
+                    Minimum="2" 
+                    Maximum="50" 
+                    TickFrequency="1" 
+                    IsSnapToTickEnabled="True" Value="{Binding vm.IterationLength}"></Slider>
+            <TextBlock 
+                Text="{Binding vm.IterationLength}"
+                HorizontalAlignment="Center"
+                FontSize="18" ></TextBlock>
+            
             <Label HorizontalContentAlignment="Center" FontSize="20" x:Name="IterationQuantityLabel" Margin="0 20 0 0">Learning Iterations</Label>
             <Slider x:Name="IterationInput" 
-                    Minimum="0" 
+                    Minimum="1" 
                     Maximum="1000" 
-                    TickFrequency="1" 
+                    TickFrequency="2" 
                     IsSnapToTickEnabled="True" Value="{Binding vm.Iterations}"></Slider>
             <TextBlock 
                 Text="{Binding vm.Iterations}"
                 HorizontalAlignment="Center"
                 FontSize="18" ></TextBlock>
 
-
             <Label HorizontalContentAlignment="Center" FontSize="20" x:Name="IterationsPerSecondLabel" Margin="0 20 0 0">Iterations Per Second</Label>
-            <Slider x:Name="IterationsPerSecondInput" Minimum="0.00" Maximum="10.00" Value="{Binding vm.IterationsPerSecond}"></Slider>
+            <Slider x:Name="IterationsPerSecondInput" Minimum="0.05" Maximum="10.00" TickFrequency="0.5" Value="{Binding vm.IterationsPerSecond}"></Slider>
             <TextBlock 
                 Text="{Binding vm.IterationsPerSecond}"
                 HorizontalAlignment="Center"
                 FontSize="18" ></TextBlock>
 
+            <CheckBox IsChecked="{Binding vm.UnlimitedIterations}">Unlimited iterations per second</CheckBox>
+
             <StackPanel Margin="0 50 0 0" Orientation="Horizontal">
-                <Button x:Name="Generate" Width="150" Height="50" FontSize="22" Command="{Binding windowVm.GenerateCommand}">Generate area</Button>
-                <Button x:Name="Learn" Width="150" Height="50" FontSize="22" Margin="10 0 0 0">Learn</Button>
+                <Button x:Name="GenerateButton" Width="150" Height="50" FontSize="22" Command="{Binding windowVm.GenerateCommand}">Generate area</Button>
+                <Button x:Name="LearnButton" Width="150" Height="50" FontSize="22" Margin="10 0 0 0" IsEnabled="{Binding vm.EnvironmentReadyForLearning}" Command="{Binding windowVm.LearnCommand}">Learn</Button>
             </StackPanel>
 
-            <Button x:Name="Simulate" Width="250" Height="50" Margin="0 20 0 0" FontSize="22">Show learning result</Button>
+            <Button x:Name="PlayButton" Width="250" Height="50" Margin="0 20 0 0" FontSize="22" Command="{Binding windowVm.PlayCommand}" IsEnabled="{Binding vm.AgentReadyToPlay}">Show Agent Behaviour</Button>
+
+            <StackPanel Margin="0 50 0 0" Orientation="Horizontal">
+                <Button x:Name="ManualIterationButton" Width="150" Height="50" Margin="0 50 10 0" FontSize="22" Content="AutoIteration" Command="{Binding windowVm.TriggerAutoCommand}">
+                    <Button.Style>
+                        <Style TargetType="{x:Type Button}">
+                            <Setter Property="Background" Value="Green"></Setter>
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding vm.ManualIteration}" Value="True">
+                                    <Setter Property="Background" Value="Red"></Setter>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Button.Style>
+                </Button>
+                <Button x:Name="NextIteration" Width="150" Height="50" Margin="0 50 0 0" FontSize="22" Command="{Binding windowVm.GoFurtherCommand}" IsEnabled="{Binding vm.ManualIteration}">NextIteration</Button>
+            </StackPanel>
+            <Button x:Name="ResetButton" Width="150" Height="50" Margin="0 50 0 0" FontSize="22" Command="{Binding windowVm.ResetCommand}">Reset</Button>
+
+            <TextBlock 
+                Name="IterationCounter"
+                Margin="0 25 0 0"
+                Text="{Binding vm.CurrentIteration}"
+                HorizontalAlignment="Center"
+                FontSize="18" ></TextBlock>
         </StackPanel>
     </Grid>
 </Window>

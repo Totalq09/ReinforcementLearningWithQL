@@ -58,16 +58,88 @@ namespace QL
             }
         }
 
+        private double iterationLength { get; set; }
+        public string IterationLength
+        {
+            get { return iterationLength.ToString("0.##"); }
+            set
+            {
+                iterationLength = double.Parse(value);
+                RaisePropertyChanged("IterationLength");
+            }
+        }
+        private bool manualIteration { get; set; }
+        public bool ManualIteration
+        {
+            get { return manualIteration; }
+            set
+            {
+                manualIteration = value;
+                RaisePropertyChanged("ManualIteration");
+            }
+        }
+
+        private int currentIteration { get; set; }
+        public string CurrentIteration
+        {
+            get { return $"Iteration: {currentIteration.ToString()}"; }
+            set
+            {
+                currentIteration = int.Parse(value);
+                RaisePropertyChanged("CurrentIteration");
+            }
+        }
+
+        private bool agentReadyToPlay { get; set; }
+        public bool AgentReadyToPlay 
+        {
+            get { return agentReadyToPlay; }
+
+            set
+            {
+                agentReadyToPlay = value;
+                RaisePropertyChanged("AgentReadyToPlay");
+            }
+        }
+
+        private bool environmentReadyForLearning { get; set; }
+        public bool EnvironmentReadyForLearning
+        {
+            get { return environmentReadyForLearning; }
+
+            set
+            {
+                environmentReadyForLearning = value;
+                RaisePropertyChanged("EnvironmentReadyForLearning");
+            }
+        }
+
+        private bool unlimitedIterations { get; set; }
+        public bool UnlimitedIterations
+        {
+            get { return unlimitedIterations; }
+
+            set
+            {
+                unlimitedIterations = value;
+                RaisePropertyChanged("UnlimitedIterations");
+            }
+        }
+
         #endregion
 
         public AreaModel AreaModel { get; set; }
 
         public QLViewModel()
         {
-            WorldSize = 8.ToString();
+            WorldSize = 12.ToString();
             Iterations = 100.ToString();
             ExitQuantity = 3.ToString();
-            IterationsPerSecond = 3.ToString();
+            IterationsPerSecond = 7.ToString();
+            IterationLength = 15.ToString();
+            ManualIteration = false;
+            CurrentIteration = 0.ToString();
+            AgentReadyToPlay = false;
         }
 
         public void GenerateNewArea()
@@ -75,6 +147,5 @@ namespace QL
             AreaModel = new AreaModel(worldSize);
             AreaModel.InitializeRandomly(exitQuantity);
         }
-
     }
 }

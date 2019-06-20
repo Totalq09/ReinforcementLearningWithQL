@@ -12,7 +12,9 @@ namespace QL.Models
         }
         public CellModel[,] Cells { get; set; }
 
-        public Tuple<int,int> PlayerInitialPosition { get; set; }
+        public List<Tuple<int,int>> Exits { get; set; }
+
+        public Tuple<int,int> AgentPosition { get; set; }
 
         public AreaModel(int worldSize)
         {
@@ -37,29 +39,30 @@ namespace QL.Models
 
         private void InitializeExits(int exitQuantity)
         {
+            this.Exits = new List<Tuple<int, int>>(exitQuantity);
             for (int i = 0; i < exitQuantity;)
             {
-                Random randomizer = new Random();
-                var x = (int)(randomizer.NextDouble() * WorldSize);
+                var x = (int)(Randomizer.NextDouble() * WorldSize);
                 var y = 0;
                 if (x == WorldSize)
                     x--;
 
                 if (x != 0 && x != WorldSize - 1)
                 {
-                    var chooseFromTwo = Math.Round(randomizer.NextDouble());
+                    var chooseFromTwo = Math.Round(Randomizer.NextDouble());
 
                     if (chooseFromTwo == 1)
                         y = WorldSize - 1;
                 }
                 else
                 {
-                    y = (int)(randomizer.NextDouble() * WorldSize);
+                    y = (int)(Randomizer.NextDouble() * WorldSize);
                 }
 
                 if (Cells[x, y].CellContent == CellContentEnum.Free)
                 {
                     Cells[x, y].CellContent = CellContentEnum.Exit;
+                    this.Exits.Add(Tuple.Create(x, y));
                     i++;
                 }
             }
@@ -67,21 +70,20 @@ namespace QL.Models
 
         private void InitializeWalls()
         {
-            var randomizer = new Random();
             var occupancePercent = 0.0;
             var cellsMarkedAsWalls = 0;
             var loopWithoutSuccess = 0;
 
-            var offset = randomizer.NextDouble();
+            var offset = Randomizer.NextDouble();
             offset = Math.Min(0.3, offset);
             offset = Math.Max(0.1, offset);
 
             while(occupancePercent < 0.2 + offset && loopWithoutSuccess < 10)
             {
-                var x = (int)(randomizer.NextDouble() * WorldSize);
-                var y = (int)(randomizer.NextDouble() * WorldSize);
+                var x = (int)(Randomizer.NextDouble() * WorldSize);
+                var y = (int)(Randomizer.NextDouble() * WorldSize);
 
-                var lengthMax = randomizer.Next(WorldSize * 2);
+                var lengthMax = Randomizer.Next(WorldSize * 2);
                 if (lengthMax < 4)
                     lengthMax = 4;
 
@@ -102,7 +104,7 @@ namespace QL.Models
                     loopWithoutSuccess = 0;
                     while (possibleMoves.Count != 0 && currentLength < lengthMax)
                     {
-                        var movement = possibleMoves[(int)(randomizer.Next(possibleMoves.Count))];
+                        var movement = possibleMoves[(int)(Randomizer.Next(possibleMoves.Count))];
                         possibleMoves.Remove(movement);
                         bool linkedToEdgeFromNow = false;
                         if (this.PossibleToMove(currentlyBuildingPath, currentEnd1.Item1, currentEnd1.Item2, currentEnd1.Item1+movement.Item1, currentEnd1.Item2+movement.Item2, linkedToEdge, out linkedToEdgeFromNow))
@@ -306,14 +308,13 @@ namespace QL.Models
 
         private void InitializeAgentPosition()
         {
-            var randomizer = new Random();
             var x = 0;
             var y = 0;
 
             while(true)
             {
-                x = randomizer.Next(WorldSize);
-                y = randomizer.Next(WorldSize);
+                x = Randomizer.Next(WorldSize);
+                y = Randomizer.Next(WorldSize);
 
                 if(Cells[x, y].CellContent == CellContentEnum.Free)
                 {
@@ -321,6 +322,8 @@ namespace QL.Models
                     break;
                 }
             }
+
+            AgentPosition = Tuple.Create(x, y);
         }
     }
 }
